@@ -5,6 +5,9 @@
 
 @use 'config' as *;
 
+$B: null;
+$E: null;
+
 // BEM
 @mixin b($block) {
   $B: $namespace + '-' + $block !global;
