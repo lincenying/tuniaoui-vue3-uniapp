@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { useNamespace } from '../../../hooks'
-import { waterFallProps } from './water-fall'
-import { useWaterFall } from './composables'
+import {useNamespace} from '../../../hooks'
+import {waterFallProps} from './water-fall'
+import {useWaterFall} from './composables'
 
 const props = defineProps(waterFallProps)
 
 const ns = useNamespace('water-fall')
 
-const { componentId, leftData, rightData, resetWaterFall } = useWaterFall(props)
+const {componentId, resetWaterFall, processedRightData, processedLeftData } = useWaterFall(props)
 
 defineExpose({
   /**
@@ -32,12 +32,18 @@ export default {
   <view :class="[ns.b()]">
     <!-- 左边数据 -->
     <view :id="`${componentId}-left`" class="left" :class="[ns.e('container')]">
+
       <view
-        v-for="(item, index) in leftData"
+        v-for="(item, index) in processedLeftData"
         :key="index"
         :class="[ns.e('item')]"
       >
-        <slot name="left" :item="item" :index="index" />
+        <template v-if="item.__is_insertion">
+          <slot :name="item.slot"/>
+        </template>
+        <template v-else>
+          <slot name="left" :item="item" :index="index"/>
+        </template>
       </view>
     </view>
     <!-- 右边数据 -->
@@ -47,11 +53,16 @@ export default {
       :class="[ns.e('container')]"
     >
       <view
-        v-for="(item, index) in rightData"
+        v-for="(item, index) in processedRightData"
         :key="index"
         :class="[ns.e('item')]"
       >
-        <slot name="right" :item="item" :index="index" />
+        <template v-if="item.__is_insertion">
+          <slot :name="item.slot"/>
+        </template>
+        <template v-else>
+          <slot name="right" :item="item" :index="index"/>
+        </template>
       </view>
     </view>
   </view>

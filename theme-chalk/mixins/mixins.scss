@@ -5,8 +5,8 @@
 
 @use 'config' as *;
 
-$B: null;
-$E: null;
+$E:null;
+$B:null;
 
 // BEM
 @mixin b($block) {

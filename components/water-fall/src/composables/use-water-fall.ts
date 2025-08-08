@@ -1,8 +1,28 @@
-import { getCurrentInstance, nextTick, ref, watch } from 'vue'
+import { getCurrentInstance, nextTick, ref, watch , computed} from 'vue'
 import { useSelectorQuery } from '../../../../hooks'
 import { cloneDeep, debugWarn, generateId } from '../../../../utils'
-import type { WaterFallProps } from '../water-fall'
+import type { WaterFallProps,Insertion } from '../water-fall'
 
+const processWithInsertions = (
+  original: any[],
+  insertions: Array<Insertion> = []
+) => {
+  const clone = [...original]
+  // 添加原始索引标记
+  clone.forEach((item: any, index: number) => (item.__originalIndex = index));
+
+  [...insertions].sort((a:Insertion, b:Insertion) => b.index - a.index)
+    .forEach(({ index, slot }) => {
+      const safePos = Math.max(0, Math.min(index, clone.length))
+      clone.splice(safePos, 0, {
+        __is_insertion: true,
+        slot,
+        __insertPosition: safePos
+      })
+    });
+
+  return clone
+}
 export const useWaterFall = (props: WaterFallProps) => {
   const instance = getCurrentInstance()
   if (!instance) {
@@ -117,11 +137,18 @@ export const useWaterFall = (props: WaterFallProps) => {
       immediate: true,
     }
   )
-
+  // 转换左边插槽数据
+  const processedLeftData = computed(() => {
+    return processWithInsertions(leftData.value, props.insertions?.left)
+  })
+  // 转换右边插槽数据
+  const processedRightData = computed(() => {
+    return processWithInsertions(rightData.value, props.insertions?.right)
+  })
   return {
     componentId,
-    leftData,
-    rightData,
     resetWaterFall,
+    processedLeftData,
+    processedRightData,
   }
 }

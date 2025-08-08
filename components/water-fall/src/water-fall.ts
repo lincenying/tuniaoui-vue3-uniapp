@@ -4,6 +4,11 @@ import type { ExtractPropTypes } from 'vue'
 
 export const waterFallModes = ['normal', 'calc'] as const
 
+export type Insertion = {
+  index: number
+  slot: string
+}
+
 export const waterFallProps = buildProps({
   /**
    * @description 列表数据
@@ -20,6 +25,16 @@ export const waterFallProps = buildProps({
     values: waterFallModes,
     default: 'normal',
   },
+  /**
+   * @description 插槽插入位置
+   */
+  insertions: {
+    type: Object as () => ({
+      left?: Insertion[]
+      right?: Insertion[]
+    }),
+    default: () => ({})
+  }
 })
 
 export type WaterFallProps = ExtractPropTypes<typeof waterFallProps>
