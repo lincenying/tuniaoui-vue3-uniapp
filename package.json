@@ -22,7 +22,8 @@
     "url": "https://github.com/lincenying/tuniaoui-vue3-uniapp"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
     "@tuniao/tn-icon": "^1.4.0",
